@@ -1,0 +1,453 @@
+{
+  "info": {
+    "name": "Clinica - Evaluacion 02",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecutar en orden en una base de demostracion. Si repites la coleccion, cambia codigo, username y correo para evitar duplicados. Captura IDs y versiones reales. DELETE desactiva conservando las relaciones."
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{admin}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{password}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "admin",
+      "value": "admin"
+    },
+    {
+      "key": "password",
+      "value": "Demo123!"
+    },
+    {
+      "key": "rolId",
+      "value": "1"
+    },
+    {
+      "key": "rolVersion",
+      "value": "0"
+    },
+    {
+      "key": "usuarioId",
+      "value": "1"
+    },
+    {
+      "key": "usuarioVersion",
+      "value": "0"
+    }
+  ],
+  "item": [
+    {
+      "name": "Crear rol",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/admin/roles",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"POSTMAN_ROL\",\n  \"nombre\": \"Consulta Postman\",\n  \"descripcion\": \"Rol de demostracion\",\n  \"activo\": true,\n  \"permisos\": [\n    \"PACIENTES\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"rolId\",x.id); pm.collectionVariables.set(\"rolVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar roles",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/admin/roles"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Editar rol",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/admin/roles/{{rolId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"POSTMAN_ROL\",\n  \"nombre\": \"Consulta actualizada\",\n  \"descripcion\": \"Rol de demostracion\",\n  \"activo\": true,\n  \"permisos\": [\n    \"PACIENTES\"\n  ],\n  \"version\": {{rolVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"rolId\",x.id); pm.collectionVariables.set(\"rolVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crear usuario con el rol",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/admin/usuarios",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"postman_user\",\n  \"nombre\": \"Usuario Postman\",\n  \"correo\": \"postman_user@example.test\",\n  \"password\": \"Prueba123!\",\n  \"activo\": true,\n  \"rolIds\": [\n    {{rolId}}\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"usuarioId\",x.id); pm.collectionVariables.set(\"usuarioVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar usuarios",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/admin/usuarios"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalle de usuario",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"usuarioId\",x.id); pm.collectionVariables.set(\"usuarioVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Editar usuario",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"postman_user\",\n  \"nombre\": \"Usuario actualizado\",\n  \"correo\": \"postman_user@example.test\",\n  \"password\": \"\",\n  \"activo\": true,\n  \"rolIds\": [\n    {{rolId}}\n  ],\n  \"version\": {{usuarioVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"usuarioId\",x.id); pm.collectionVariables.set(\"usuarioVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Desactivar usuario",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}/estado",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activo\": false,\n  \"version\": {{usuarioVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"usuarioId\",x.id); pm.collectionVariables.set(\"usuarioVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reactivar usuario",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}/estado",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activo\": true,\n  \"version\": {{usuarioVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"usuarioId\",x.id); pm.collectionVariables.set(\"usuarioVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Desactivar rol",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/admin/roles/{{rolId}}/estado",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activo\": false,\n  \"version\": {{rolVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"rolId\",x.id); pm.collectionVariables.set(\"rolVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reactivar rol",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/admin/roles/{{rolId}}/estado",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activo\": true,\n  \"version\": {{rolVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "if ([200,201].includes(pm.response.code)) { const x=pm.response.json(); pm.collectionVariables.set(\"rolId\",x.id); pm.collectionVariables.set(\"rolVersion\",x.version); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auditoria administrativa",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/auditoria?usuario=admin"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Datos personales de pacientes",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/pacientes"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eliminar logicamente usuario",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/admin/usuarios/{{usuarioId}}?version={{usuarioVersion}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eliminar logicamente rol",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/admin/roles/{{rolId}}?version={{rolVersion}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

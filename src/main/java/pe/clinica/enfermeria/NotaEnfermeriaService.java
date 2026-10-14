@@ -4,7 +4,7 @@ package pe.clinica.enfermeria;
 import org.springframework.stereotype.Service;
 @Service
 public class NotaEnfermeriaService extends ClinicalService<NotaEnfermeria,NotaEnfermeriaForm> {
- public NotaEnfermeriaService(NotaEnfermeriaRepository repository, AccesoService acceso, AuditoriaRepository auditoria, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, auditoria, mapper); }
+ public NotaEnfermeriaService(NotaEnfermeriaRepository repository, AccesoService acceso, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, mapper); }
  protected NotaEnfermeria nuevo() { return new NotaEnfermeria(); }
  protected void copiar(NotaEnfermeriaForm form, NotaEnfermeria entity) {
   entity.setFechaHora(form.getFechaHora());

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.*;
 import java.math.BigDecimal;
 @MappedSuperclass
-public abstract class RegistroClinico {
+public abstract class RegistroClinico implements AuditTarget {
  @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
  private Long id;
  @Version

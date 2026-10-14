@@ -8,11 +8,12 @@ import java.time.LocalDate;
 import java.util.*;
 @Service
 public class AsignacionService {
- private final AsignacionRepository repository; private final AccesoService acceso;
- public AsignacionService(AsignacionRepository repository, AccesoService acceso) { this.repository=repository;this.acceso=acceso; }
+ private final AsignacionRepository repository; private final AccesoService acceso; private final CuentaService cuenta;
+ public AsignacionService(AsignacionRepository repository, AccesoService acceso,CuentaService cuenta) { this.repository=repository;this.acceso=acceso;this.cuenta=cuenta; }
  @Transactional(readOnly=true)
+ @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ENFERMERIA')")
  public List<Map<String,Object>> listar(LocalDate fecha,String turno,String servicio,Long profesionalId,String buscar) {
-  var actual=acceso.actual(); boolean supervisor="SUPERVISOR".equals(actual.getRol());
+  var actual=acceso.actual(); boolean supervisor=cuenta.puede("SUPERVISION");
   if (profesionalId!=null && !profesionalId.equals(actual.getId()) && !supervisor) throw new AccessDeniedException("Asignaciones no autorizadas");
   var seleccionado=profesionalId!=null?profesionalId:actual.getId();
   return repository.listar().stream().filter(a -> a.getProfesional().getId().equals(seleccionado))

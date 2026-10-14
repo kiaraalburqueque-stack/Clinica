@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
-<header th:fragment="header"><a class="brand" th:href="@{/}"><span class="brand-mark">+</span> Clínica <b>Enfermería</b></a><nav><a th:href="@{/}">Pacientes asignados</a><span th:text="${profesional.nombre}"></span><form th:action="@{/logout}" method="post"><button class="quiet" type="submit">Cerrar sesión</button></form></nav></header>
+<header th:fragment="header"><a class="brand" th:href="@{/}"><span class="brand-mark">+</span> Clínica <b>Enfermería</b></a><nav>
+<a th:if="${puedeENFERMERIA}" th:href="@{/}">Asignados</a><a th:if="${puedePACIENTES}" th:href="@{/pacientes}">Pacientes</a><a th:if="${puedeADMINISTRAR}" th:href="@{/admin/usuarios}">Usuarios</a><a th:if="${puedeADMINISTRAR}" th:href="@{/admin/roles}">Roles</a><a th:if="${puedeAUDITORIA}" th:href="@{/auditoria}">Auditoría</a><span th:text="${profesional.nombre}"></span><form th:action="@{/logout}" method="post"><button class="quiet" type="submit">Cerrar sesión</button></form></nav></header>
 <section th:fragment="paciente" class="patient-strip"><div><small th:text="${paciente.codigo}"></small><h2 th:text="${paciente.nombre}"></h2><span th:text="${'Documento: '+paciente.documento}"></span></div><a class="button secondary" th:href="@{/pacientes/{id}(id=${paciente.id})}">Ficha del paciente</a></section>
-<footer th:fragment="footer">Módulo de enfermería · Proyecto académico · Datos de demostración ficticios</footer>
+<footer th:fragment="footer">Módulo de enfermería · Evaluación 2 · Datos de demostración ficticios</footer>
 </body></html>

@@ -4,7 +4,7 @@ package pe.clinica.enfermeria;
 import org.springframework.stereotype.Service;
 @Service
 public class ProcedimientoService extends ClinicalService<Procedimiento,ProcedimientoForm> {
- public ProcedimientoService(ProcedimientoRepository repository, AccesoService acceso, AuditoriaRepository auditoria, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, auditoria, mapper); }
+ public ProcedimientoService(ProcedimientoRepository repository, AccesoService acceso, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, mapper); }
  protected Procedimiento nuevo() { return new Procedimiento(); }
  protected void copiar(ProcedimientoForm form, Procedimiento entity) {
   entity.setFechaHora(form.getFechaHora());

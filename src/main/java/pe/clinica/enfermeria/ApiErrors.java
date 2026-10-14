@@ -18,5 +18,7 @@ public class ApiErrors {
  @ExceptionHandler(AccessDeniedException.class) public ResponseEntity<?> denied(AccessDeniedException e) {return ResponseEntity.status(403).body(Map.of("mensaje",e.getMessage()));}
  @ExceptionHandler(ResponseStatusException.class) public ResponseEntity<?> status(ResponseStatusException e) {return ResponseEntity.status(e.getStatusCode()).body(Map.of("mensaje",Objects.requireNonNullElse(e.getReason(),"Solicitud inválida")));}
  @ExceptionHandler({HttpMessageNotReadableException.class,MethodArgumentTypeMismatchException.class}) public ResponseEntity<?> malformed(Exception e) {return ResponseEntity.badRequest().body(Map.of("mensaje","Formato de datos inválido"));}
+ @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class) public ResponseEntity<?> integridad(Exception e) {return ResponseEntity.status(409).body(Map.of("mensaje","Conflicto de integridad: el registro está duplicado o relacionado"));}
+ @ExceptionHandler(jakarta.validation.ConstraintViolationException.class) public ResponseEntity<?> constraint(Exception e) {return ResponseEntity.badRequest().body(Map.of("mensaje","Datos inválidos"));}
  @ExceptionHandler(OptimisticLockingFailureException.class) public ResponseEntity<?> conflict(Exception e) {return ResponseEntity.status(409).body(Map.of("mensaje","El registro cambió. Recargue antes de corregirlo"));}
 }

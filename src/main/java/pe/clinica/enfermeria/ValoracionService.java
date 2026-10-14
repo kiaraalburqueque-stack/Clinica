@@ -4,7 +4,7 @@ package pe.clinica.enfermeria;
 import org.springframework.stereotype.Service;
 @Service
 public class ValoracionService extends ClinicalService<Valoracion,ValoracionForm> {
- public ValoracionService(ValoracionRepository repository, AccesoService acceso, AuditoriaRepository auditoria, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, auditoria, mapper); }
+ public ValoracionService(ValoracionRepository repository, AccesoService acceso, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, mapper); }
  protected Valoracion nuevo() { return new Valoracion(); }
  protected void copiar(ValoracionForm form, Valoracion entity) {
   entity.setFechaHora(form.getFechaHora());

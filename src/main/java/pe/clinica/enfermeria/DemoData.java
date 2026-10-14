@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.*;
 @Component
+@org.springframework.core.annotation.Order(10)
 @ConditionalOnProperty(name="app.seed-demo",havingValue="true")
 public class DemoData implements CommandLineRunner {
  private final ProfesionalRepository profesionales;

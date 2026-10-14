@@ -4,7 +4,7 @@ package pe.clinica.enfermeria;
 import org.springframework.stereotype.Service;
 @Service
 public class SignoVitalService extends ClinicalService<SignoVital,SignoVitalForm> {
- public SignoVitalService(SignoVitalRepository repository, AccesoService acceso, AuditoriaRepository auditoria, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, auditoria, mapper); }
+ public SignoVitalService(SignoVitalRepository repository, AccesoService acceso, com.fasterxml.jackson.databind.ObjectMapper mapper) { super(repository, repository, acceso, mapper); }
  protected SignoVital nuevo() { return new SignoVital(); }
  protected void copiar(SignoVitalForm form, SignoVital entity) {
   entity.setFechaHora(form.getFechaHora());
