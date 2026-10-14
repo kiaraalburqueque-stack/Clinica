@@ -1,0 +1,616 @@
+{
+  "info": {
+    "name": "Clinica - Enfermeria",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{usuario}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{password}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "usuario",
+      "value": "ana"
+    },
+    {
+      "key": "password",
+      "value": "Demo123!"
+    },
+    {
+      "key": "pacienteId",
+      "value": "1"
+    },
+    {
+      "key": "registroId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "RF-ENF-06 - Pacientes asignados",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/enfermeria/pacientes-asignados"
+      }
+    },
+    {
+      "name": "RF-ENF-10 / RF-ENF-12 - Signos vitales",
+      "item": [
+        {
+          "name": "Registrar - Signos vitales",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/signos-vitales",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"temperatura\": 37.2,\n  \"sistolica\": 120,\n  \"diastolica\": 80,\n  \"frecuenciaCardiaca\": 78,\n  \"frecuenciaRespiratoria\": 18,\n  \"saturacion\": 97,\n  \"dolor\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"registroId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial - Signos vitales",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/signos-vitales"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle - Signos vitales",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/signos-vitales/{{registroId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Corregir - Signos vitales",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/signos-vitales/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"temperatura\": 37.2,\n  \"sistolica\": 120,\n  \"diastolica\": 80,\n  \"frecuenciaCardiaca\": 78,\n  \"frecuenciaRespiratoria\": 18,\n  \"saturacion\": 97,\n  \"dolor\": 3,\n  \"version\": 0,\n  \"motivoCambio\": \"Correccion de transcripcion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anular - Signos vitales",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/signos-vitales/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Registro de demostracion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RF-ENF-07 / RF-ENF-09 - Valoraciones",
+      "item": [
+        {
+          "name": "Registrar - Valoraciones",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/valoraciones",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"estadoGeneral\": \"Estable\",\n  \"conciencia\": \"Orientado\",\n  \"dolor\": 3,\n  \"movilidad\": \"Parcial\",\n  \"alimentacion\": \"Via oral\",\n  \"necesidades\": \"Apoyo para movilizacion\",\n  \"riesgoCaida\": \"Medio\",\n  \"riesgoLesiones\": \"Bajo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"registroId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial - Valoraciones",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/valoraciones"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle - Valoraciones",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/valoraciones/{{registroId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Corregir - Valoraciones",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/valoraciones/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"estadoGeneral\": \"Estable\",\n  \"conciencia\": \"Orientado\",\n  \"dolor\": 3,\n  \"movilidad\": \"Parcial\",\n  \"alimentacion\": \"Via oral\",\n  \"necesidades\": \"Apoyo para movilizacion\",\n  \"riesgoCaida\": \"Medio\",\n  \"riesgoLesiones\": \"Bajo\",\n  \"version\": 0,\n  \"motivoCambio\": \"Correccion de transcripcion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anular - Valoraciones",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/valoraciones/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Registro de demostracion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RF-ENF-25 / RF-ENF-27 - Procedimientos",
+      "item": [
+        {
+          "name": "Registrar - Procedimientos",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/procedimientos",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"tipo\": \"Higiene\",\n  \"resultado\": \"Realizada\",\n  \"observaciones\": \"Paciente tolera el procedimiento\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"registroId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial - Procedimientos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/procedimientos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle - Procedimientos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/procedimientos/{{registroId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Corregir - Procedimientos",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/procedimientos/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"tipo\": \"Higiene\",\n  \"resultado\": \"Realizada\",\n  \"observaciones\": \"Paciente tolera el procedimiento\",\n  \"version\": 0,\n  \"motivoCambio\": \"Correccion de transcripcion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anular - Procedimientos",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/procedimientos/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Registro de demostracion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RF-ENF-31 - Notas de enfermería",
+      "item": [
+        {
+          "name": "Registrar - Notas de enfermería",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/notas",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"contenido\": \"Paciente consciente y orientado. Se realiza control de signos vitales.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"registroId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial - Notas de enfermería",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/notas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle - Notas de enfermería",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/notas/{{registroId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Corregir - Notas de enfermería",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/notas/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaHora\": \"2026-10-01T08:00:00\",\n  \"contenido\": \"Paciente consciente y orientado. Se realiza control de signos vitales.\",\n  \"version\": 0,\n  \"motivoCambio\": \"Correccion de transcripcion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anular - Notas de enfermería",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pacientes/{{pacienteId}}/notas/{{registroId}}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Registro de demostracion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
