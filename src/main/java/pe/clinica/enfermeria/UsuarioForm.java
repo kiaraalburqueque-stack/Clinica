@@ -16,7 +16,7 @@ public class UsuarioForm {
 
  private boolean activo = true;
  @NotEmpty
- private Set<Long> rolIds = new LinkedHashSet<>();
+ private Set<@NotNull Long> rolIds = new LinkedHashSet<>();
 
  private Long version;
  public String getUsername() { return username; }

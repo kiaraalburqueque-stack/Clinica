@@ -142,4 +142,21 @@ class EnfermeriaIntegrationTest {
    .param("fechaHora","2020-01-10T09:00").param("contenido",""))
    .andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("Revisa los datos")));
  }
+ @ParameterizedTest @ValueSource(strings={"signos-vitales","valoraciones","procedimientos","notas"})
+ void formulariosRegistranCorrigenYAnulanSinPerderHistorial(String modulo) throws Exception {
+  String web="/pacientes/1/"+modulo,api="/api/pacientes/1/"+modulo;
+  var data=datos(modulo);data.put("fechaHora","2021-02-01T08:00");
+  var create=post(web).with(user("ana")).with(csrf());data.forEach((key,value) -> create.param(key,value.toString()));
+  mvc.perform(create).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(web));
+  var response=mvc.perform(get(api).param("desde","2021-02-01").param("hasta","2021-02-01").with(httpBasic("ana","Demo123!"))).andExpect(status().isOk()).andReturn();
+  var registro=mapper.readTree(response.getResponse().getContentAsString()).get("content").get(0);long id=registro.get("id").asLong();
+  mvc.perform(get(web+"/"+id+"/editar").with(user("ana"))).andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("Guardar registro")));
+  data.put("fechaHora","2021-02-01T08:01");data.put("version",registro.get("version").asLong());data.put("motivoCambio","Corregir la hora de registro");
+  var edit=post(web+"/"+id).with(user("ana")).with(csrf());data.forEach((key,value) -> edit.param(key,value.toString()));
+  mvc.perform(edit).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(web));
+  mvc.perform(post(web+"/"+id+"/anular").with(user("ana")).with(csrf()).param("motivo","Registro de ensayo"))
+   .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(web));
+  mvc.perform(get(web).with(user("ana"))).andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("Registro de ensayo")));
+  mvc.perform(get(api+"/"+id).with(httpBasic("ana","Demo123!"))).andExpect(status().isOk()).andExpect(jsonPath("$.anulado").value(true));
+ }
 }

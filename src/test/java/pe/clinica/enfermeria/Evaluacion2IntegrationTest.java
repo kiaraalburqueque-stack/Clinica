@@ -34,6 +34,7 @@ class Evaluacion2IntegrationTest {
  @Autowired IdentityData migration;
  @Autowired PacienteRepository pacientes;
  @Autowired NotaEnfermeriaRepository notas;
+ @Autowired jakarta.validation.ValidatorFactory validatorFactory;
 
  private Map<String,Object> rolForm(String codigo) {
   var m=new LinkedHashMap<String,Object>();m.put("codigo",codigo);m.put("nombre","Rol de prueba");m.put("descripcion","Evaluación 2");m.put("activo",true);m.put("permisos",List.of("PACIENTES"));return m;
@@ -155,5 +156,22 @@ class Evaluacion2IntegrationTest {
   assertThat(migrated.getProfesional().getId()).isEqualTo(legacy.getId());assertThat(migrated.getPasswordHash()).isEqualTo(hash);
   assertThat(migrated.getRoles()).extracting(Rol::getCodigo).containsExactly("ENFERMERIA");
   var conservada=notas.findById(nota.getId()).orElseThrow();assertThat(conservada.getContenido()).isEqualTo("Nota anterior a la migración");assertThat(conservada.getProfesional().getId()).isEqualTo(legacy.getId());
+ }
+ @Test void relacionesNulasSeRechazanSinGuardarNiAuditar() throws Exception {
+  long cuentas=usuarios.count(),perfiles=profesionales.count(),eventos=auditoria.count();
+  var form=usuarioForm("prueba_nulos",1L);form.put("rolIds",Arrays.asList((Long)null));
+  mvc.perform(post("/api/admin/usuarios").with(httpBasic("admin","Demo123!")).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(form))).andExpect(status().isBadRequest());
+  var rol=rolForm("ROL_NULOS");rol.put("permisos",Arrays.asList((String)null));
+  mvc.perform(post("/api/admin/roles").with(httpBasic("admin","Demo123!")).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(rol))).andExpect(status().isBadRequest());
+  assertThat(usuarios.count()).isEqualTo(cuentas);assertThat(profesionales.count()).isEqualTo(perfiles);assertThat(auditoria.count()).isEqualTo(eventos);
+ }
+ @Test void fechasInvalidasYParametrosAusentesMuestranErroresClaros() throws Exception {
+  mvc.perform(get("/auditoria").param("desde","no-es-fecha").with(user("admin")))
+   .andExpect(status().isBadRequest()).andExpect(content().string(org.hamcrest.Matchers.containsString("Revisa las fechas")));
+  mvc.perform(get("/api/auditoria").param("desde","no-es-fecha").with(httpBasic("admin","Demo123!")))
+   .andExpect(status().isBadRequest()).andExpect(jsonPath("$.mensaje").exists());
+  mvc.perform(delete("/api/admin/usuarios/1").with(httpBasic("admin","Demo123!")))
+   .andExpect(status().isBadRequest()).andExpect(jsonPath("$.mensaje").exists());
+  assertThat(validatorFactory.getClockProvider().getClock().getZone()).isEqualTo(java.time.ZoneId.of("America/Lima"));
  }
 }

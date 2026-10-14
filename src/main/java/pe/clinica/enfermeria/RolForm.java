@@ -14,7 +14,7 @@ public class RolForm {
 
  private boolean activo = true;
  @NotEmpty
- private Set<Permiso> permisos = new LinkedHashSet<>();
+ private Set<@NotNull Permiso> permisos = new LinkedHashSet<>();
 
  private Long version;
  public String getCodigo() { return codigo; }
